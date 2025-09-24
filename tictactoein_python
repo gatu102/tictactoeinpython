@@ -1,0 +1,81 @@
+import random
+
+def print_board(board):
+    print("\nBoard:")
+    for i, row in enumerate(board):
+        print(f"{i} | {' | '.join(row)}")
+        if i < 2:
+            print("  " + "-"*9)
+    print("    0   1   2\n")
+
+def check_winner(board, player):
+    # Rows, columns
+    for i in range(3):
+        if all(board[i][j] == player for j in range(3)) or all(board[j][i] == player for j in range(3)):
+            return True
+    # Diagonals
+    if all(board[i][i] == player for i in range(3)) or all(board[i][2-i] == player for i in range(3)):
+        return True
+    return False
+
+def player_move(board, player):
+    while True:
+        try:
+            row = int(input(f"Player {player}, enter row (0-2): "))
+            col = int(input(f"Player {player}, enter column (0-2): "))
+        except ValueError:
+            print("Enter valid numbers 0, 1, or 2.")
+            continue
+        if row not in range(3) or col not in range(3):
+            print("Invalid position. Try again.")
+            continue
+        if board[row][col] != " ":
+            print("Cell already taken. Choose another.")
+            continue
+        board[row][col] = player
+        break
+
+def ai_move(board, player):
+    # Basic random AI
+    empty = [(r, c) for r in range(3) for c in range(3) if board[r][c] == " "]
+    if empty:
+        row, col = random.choice(empty)
+        board[row][col] = player
+        print(f"AI ({player}) played at {row}, {col}")
+
+def tic_tac_toe():
+    print("Welcome to Tic Tac Toe!")
+    while True:
+        board = [[" "]*3 for _ in range(3)]
+        players = ["X", "O"]
+        turn = 0
+        moves = 0
+
+        while moves < 9:
+            print_board(board)
+            player = players[turn % 2]
+
+            # Uncomment next line to make O an AI
+            # if player == "O": ai_move(board, player)
+            # else: player_move(board, player)
+
+            player_move(board, player)  # Both human players
+            moves += 1
+
+            if check_winner(board, player):
+                print_board(board)
+                print(f"🎉 Player {player} wins!")
+                break
+
+            turn += 1
+        else:
+            print_board(board)
+            print("It's a tie!")
+
+        again = input("Play again? (y/n): ").lower()
+        if again != "y":
+            print("Thanks for playing!")
+            break
+
+if __name__ == "__main__":
+    tic_tac_toe()
